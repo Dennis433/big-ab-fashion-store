@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - BIG AB Fashion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px;
+            background: #111;
+            height: 100vh;
+            position: fixed;
+            top: 0; left: 0;
+            border-right: 1px solid #222;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+        }
+
+        .sidebar img {
+            height: 70px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            width: 100%;
+            padding: 14px 30px;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            display: block;
+        }
+
+        .sidebar a:hover, .sidebar a.active {
+            color: #c9a84c;
+            background: #1a1a1a;
+            border-left: 3px solid #c9a84c;
+        }
+
+        .sidebar .logout { color: #ff4444; margin-top: auto; }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            padding: 40px;
+            max-width: 700px;
+        }
+
+        .main h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .main p.subtitle {
+            color: #aaa;
+            margin-bottom: 40px;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #c9a84c;
+            margin-bottom: 8px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            font-family: 'Raleway', sans-serif;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #c9a84c;
+        }
+
+        select option { background: #111; }
+
+        textarea { height: 120px; resize: vertical; }
+
+        .submit-btn {
+            padding: 14px 40px;
+            background: #c9a84c;
+            color: #000;
+            border: none;
+            font-family: 'Raleway', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover { background: #fff; }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 16px;
+            margin-left: 16px;
+            padding: 14px 30px;
+            border: 1px solid #555;
+            color: #aaa;
+            text-decoration: none;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover { border-color: #fff; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
+        <a href="{{ url_for('admin_dashboard') }}">📦 Products</a>
+        <a href="{{ url_for('add_product') }}" class="active">➕ Add Product</a>
+        <a href="{{ url_for('home') }}">🏠 View Site</a>
+        <a href="{{ url_for('admin_logout') }}" class="logout">🚪 Logout</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <h1>Add New Product</h1>
+        <p class="subtitle">Fill in the details below to add a product</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" name="name" placeholder="e.g. Classic Black Suit" required>
+            </div>
+
+            <div class="form-group">
+                <label>Price (₦)</label>
+                <input type="number" name="price" placeholder="e.g. 25000" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category" required>
+                    <option value="" disabled selected>Select category</option>
+                    <option value="Men">Men</option>
+                    <option value="Women">Women</option>
+                    <option value="Accessories">Accessories</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" placeholder="Describe the product..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Product Image</label>
+                <input type="file" name="image" accept="image/*">
+            </div>
+
+            <button type="submit" class="submit-btn">Add Product</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="back-btn">Back</a>
+        </form>
+    </div>
+
+</body>
+</html>
