@@ -4,6 +4,8 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
 import os
 
 load_dotenv()
@@ -15,7 +17,13 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "pool_pre_ping": True,
     "pool_recycle": 300,
 }
-app.config['UPLOAD_FOLDER'] = 'static/images/products'
+
+# ── CLOUDINARY CONFIG ────────────────────────────────
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET')
+)
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -33,7 +41,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
     category = db.Column(db.String(50), nullable=False)
-    image = db.Column(db.String(200), nullable=True)
+    image = db.Column(db.String(500), nullable=True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -91,17 +99,25 @@ def add_product():
         category = request.form['category']
         image = request.files['image']
 
-        image_filename = None
+        image_url = None
         if image and image.filename != '':
-            image_filename = secure_filename(image.filename)
-            image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+            upload_result = cloudinary.uploader.upload(
+                image,
+                folder='bigab_fashion',
+                transformation=[
+                    {'width': 800, 'height': 1000, 'crop': 'fill'},
+                    {'quality': 'auto'},
+                    {'fetch_format': 'auto'}
+                ]
+            )
+            image_url = upload_result['secure_url']
 
         product = Product(
             name=name,
             price=float(price),
             description=description,
             category=category,
-            image=image_filename
+            image=image_url
         )
         db.session.add(product)
         db.session.commit()

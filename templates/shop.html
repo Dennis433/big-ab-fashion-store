@@ -54,7 +54,7 @@
             <div class="product-card">
                 <div class="product-img">
                     {% if product.image %}
-                        <img src="{{ url_for('static', filename='images/products/' + product.image) }}" alt="{{ product.name }}">
+                        <img src="{{ product.image }}" alt="{{ product.name }}">
                     {% else %}
                         <div class="no-img">No Image</div>
                     {% endif %}

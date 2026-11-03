@@ -269,7 +269,7 @@
                 <tr>
                     <td>
                         {% if product.image %}
-                            <img src="{{ url_for('static', filename='images/products/' + product.image) }}" alt="{{ product.name }}">
+                            <img src="{{ product.image }}" alt="{{ product.name }}">
                         {% else %}
                             No Image
                         {% endif %}
