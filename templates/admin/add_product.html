@@ -14,7 +14,6 @@
             color: #fff;
         }
 
-        /* SIDEBAR */
         .sidebar {
             width: 240px;
             background: #111;
@@ -53,7 +52,6 @@
 
         .sidebar .logout { color: #ff4444; margin-top: auto; }
 
-        /* MAIN */
         .main {
             margin-left: 240px;
             padding: 40px;
@@ -73,9 +71,7 @@
             letter-spacing: 1px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
 
         label {
             display: block;
@@ -102,7 +98,6 @@
         }
 
         select option { background: #111; }
-
         textarea { height: 120px; resize: vertical; }
 
         .submit-btn {
@@ -141,7 +136,6 @@
 </head>
 <body>
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
         <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
         <a href="{{ url_for('admin_dashboard') }}">📦 Products</a>
@@ -150,7 +144,6 @@
         <a href="{{ url_for('admin_logout') }}" class="logout">🚪 Logout</a>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main">
         <h1>Add New Product</h1>
         <p class="subtitle">Fill in the details below to add a product</p>
@@ -158,7 +151,7 @@
         <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Product Name</label>
-                <input type="text" name="name" placeholder="e.g. Classic Black Suit" required>
+                <input type="text" name="name" placeholder="e.g. Classic Black Kaftan" required>
             </div>
 
             <div class="form-group">
@@ -170,9 +163,15 @@
                 <label>Category</label>
                 <select name="category" required>
                     <option value="" disabled selected>Select category</option>
-                    <option value="Men">Men</option>
-                    <option value="Women">Women</option>
-                    <option value="Accessories">Accessories</option>
+                    <option value="Jalabiya">Jalabiya</option>
+                    <option value="Senators">Senators</option>
+                    <option value="Kaftans">Kaftans</option>
+                    <option value="Street Wears">Street Wears (Jorts, Hoodie, Jean, Sweat Pants, Cargos)</option>
+                    <option value="Owanbe Caps">Owanbe Caps</option>
+                    <option value="Hausa Caps">Hausa Caps</option>
+                    <option value="2 Piece Male">2 Piece - Male</option>
+                    <option value="2 Piece Female">2 Piece - Female</option>
+                    <option value="Stone Work & Embellishment">Stone Work & Embellishment</option>
                 </select>
             </div>
 

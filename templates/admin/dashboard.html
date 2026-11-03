@@ -14,7 +14,6 @@
             color: #fff;
         }
 
-        /* SIDEBAR */
         .sidebar {
             width: 240px;
             background: #111;
@@ -56,7 +55,6 @@
             color: #ff4444;
         }
 
-        /* MAIN */
         .main {
             margin-left: 240px;
             padding: 40px;
@@ -85,7 +83,6 @@
             font-size: 13px;
         }
 
-        /* STATS */
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -114,7 +111,6 @@
             margin-top: 6px;
         }
 
-        /* ADD BUTTON */
         .add-btn {
             display: inline-block;
             padding: 12px 30px;
@@ -131,16 +127,13 @@
 
         .add-btn:hover { background: #fff; }
 
-        /* TABLE */
         table {
             width: 100%;
             border-collapse: collapse;
             background: #111;
         }
 
-        thead {
-            background: #1a1a1a;
-        }
+        thead { background: #1a1a1a; }
 
         th {
             padding: 14px 16px;
@@ -195,7 +188,6 @@
 </head>
 <body>
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
         <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
         <a href="{{ url_for('admin_dashboard') }}" class="active">📦 Products</a>
@@ -204,7 +196,6 @@
         <a href="{{ url_for('admin_logout') }}" class="logout">🚪 Logout</a>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main">
         <h1>Dashboard</h1>
         <p class="subtitle">Manage your BIG AB Fashion products</p>
@@ -222,18 +213,45 @@
                 <p>Total Products</p>
             </div>
             <div class="stat-card">
-                <h3>{{ products|selectattr('category', 'equalto', 'Men')|list|length }}</h3>
-                <p>Men's Items</p>
+                <h3>{{ products|selectattr('category', 'equalto', 'Jalabiya')|list|length }}</h3>
+                <p>Jalabiya</p>
             </div>
             <div class="stat-card">
-                <h3>{{ products|selectattr('category', 'equalto', 'Women')|list|length }}</h3>
-                <p>Women's Items</p>
+                <h3>{{ products|selectattr('category', 'equalto', 'Senators')|list|length }}</h3>
+                <p>Senators</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ products|selectattr('category', 'equalto', 'Kaftans')|list|length }}</h3>
+                <p>Kaftans</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ products|selectattr('category', 'equalto', 'Street Wears')|list|length }}</h3>
+                <p>Street Wears</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ products|selectattr('category', 'equalto', 'Owanbe Caps')|list|length }}</h3>
+                <p>Owanbe Caps</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ products|selectattr('category', 'equalto', 'Hausa Caps')|list|length }}</h3>
+                <p>Hausa Caps</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ products|selectattr('category', 'equalto', '2 Piece Male')|list|length }}</h3>
+                <p>2 Piece Male</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ products|selectattr('category', 'equalto', '2 Piece Female')|list|length }}</h3>
+                <p>2 Piece Female</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ products|selectattr('category', 'equalto', 'Stone Work & Embellishment')|list|length }}</h3>
+                <p>Stone Work</p>
             </div>
         </div>
 
         <a href="{{ url_for('add_product') }}" class="add-btn">➕ Add New Product</a>
 
-        <!-- PRODUCTS TABLE -->
         {% if products %}
         <table>
             <thead>
@@ -259,7 +277,7 @@
                     <td>{{ product.name }}</td>
                     <td>{{ product.category }}</td>
                     <td>₦{{ "%.2f"|format(product.price) }}</td>
-                    <td>{{ product.description[:50] }}{% if product.description|length > 50 %}...{% endif %}</td>
+                    <td>{{ product.description[:50] if product.description else '' }}{% if product.description and product.description|length > 50 %}...{% endif %}</td>
                     <td>
                         <a href="{{ url_for('delete_product', id=product.id) }}" class="delete-btn"
                            onclick="return confirm('Delete this product?')">Delete</a>

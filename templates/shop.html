@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collections - BIG AB Fashion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-logo">
+            <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB Fashion Logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('shop') }}" class="active">Collections</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        <div class="nav-icons">
+            <a href="#">🔍</a>
+            <a href="#">🛒</a>
+        </div>
+    </nav>
+
+    <!-- PAGE HEADER -->
+    <section class="page-header">
+        <h1>Our Collections</h1>
+        <p>Discover the finest in luxury fashion</p>
+    </section>
+
+    <!-- FILTER TABS -->
+    <section class="shop-section">
+        <div class="filter-tabs">
+            <a href="{{ url_for('shop') }}" class="tab {% if active_category == 'All' %}active{% endif %}">All</a>
+            <a href="{{ url_for('shop', category='Jalabiya') }}" class="tab {% if active_category == 'Jalabiya' %}active{% endif %}">Jalabiya</a>
+            <a href="{{ url_for('shop', category='Senators') }}" class="tab {% if active_category == 'Senators' %}active{% endif %}">Senators</a>
+            <a href="{{ url_for('shop', category='Kaftans') }}" class="tab {% if active_category == 'Kaftans' %}active{% endif %}">Kaftans</a>
+            <a href="{{ url_for('shop', category='Street Wears') }}" class="tab {% if active_category == 'Street Wears' %}active{% endif %}">Street Wears</a>
+            <a href="{{ url_for('shop', category='Owanbe Caps') }}" class="tab {% if active_category == 'Owanbe Caps' %}active{% endif %}">Owanbe Caps</a>
+            <a href="{{ url_for('shop', category='Hausa Caps') }}" class="tab {% if active_category == 'Hausa Caps' %}active{% endif %}">Hausa Caps</a>
+            <a href="{{ url_for('shop', category='2 Piece Male') }}" class="tab {% if active_category == '2 Piece Male' %}active{% endif %}">2 Piece Male</a>
+            <a href="{{ url_for('shop', category='2 Piece Female') }}" class="tab {% if active_category == '2 Piece Female' %}active{% endif %}">2 Piece Female</a>
+            <a href="{{ url_for('shop', category='Stone Work & Embellishment') }}" class="tab {% if active_category == 'Stone Work & Embellishment' %}active{% endif %}">Stone Work & Embellishment</a>
+        </div>
+
+        <!-- PRODUCTS GRID -->
+        {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-img">
+                    {% if product.image %}
+                        <img src="{{ url_for('static', filename='images/products/' + product.image) }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="no-img">No Image</div>
+                    {% endif %}
+                    <div class="product-overlay">
+                        <a href="#" class="overlay-btn">Quick View</a>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category }}</span>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">₦{{ "%.2f"|format(product.price) }}</p>
+                    <a href="#" class="add-to-cart-btn">Add to Cart</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-products">
+            <p>No products found in this category.</p>
+            <a href="{{ url_for('shop') }}" class="btn">View All</a>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB Fashion">
+            <p>© 2024 BIG AB Fashion. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

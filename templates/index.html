@@ -15,9 +15,8 @@
             <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB Fashion Logo">
         </div>
         <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Shop</a></li>
-            <li><a href="#">Collections</a></li>
+            <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
+            <li><a href="{{ url_for('shop') }}">Collections</a></li>
             <li><a href="#">About</a></li>
             <li><a href="#">Contact</a></li>
         </ul>
@@ -32,9 +31,55 @@
         <div class="hero-content">
             <h1>Redefine Your Style</h1>
             <p>Luxury fashion for the bold & elegant</p>
-            <a href="#" class="btn">Shop Now</a>
+            <a href="{{ url_for('shop') }}" class="btn">Explore Collections</a>
         </div>
     </section>
+
+    <!-- HIGHLIGHTS -->
+    {% if highlights %}
+    {% for category, products in highlights.items() %}
+    <section class="highlight-section">
+        <div class="highlight-header">
+            <h2>{{ category }}</h2>
+            <a href="{{ url_for('shop', category=category) }}" class="view-all">View All →</a>
+        </div>
+        <div class="highlight-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-img">
+                    {% if product.image %}
+                        <img src="{{ url_for('static', filename='images/products/' + product.image) }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="no-img">No Image</div>
+                    {% endif %}
+                    <div class="product-overlay">
+                        <a href="{{ url_for('shop', category=category) }}" class="overlay-btn">View Collection</a>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category }}</span>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-price">₦{{ "%.2f"|format(product.price) }}</p>
+                    <a href="{{ url_for('shop', category=category) }}" class="add-to-cart-btn">Shop {{ category }}</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+    {% else %}
+    <section class="no-highlights">
+        <p>No products available yet. Check back soon!</p>
+    </section>
+    {% endif %}
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB Fashion">
+            <p>© 2024 BIG AB Fashion. All rights reserved.</p>
+        </div>
+    </footer>
 
 </body>
 </html>

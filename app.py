@@ -35,7 +35,26 @@ def load_user(user_id):
 # ── ROUTES ──────────────────────────────────────────
 @app.route('/')
 def home():
-    return render_template('index.html')
+    categories = [
+        'Jalabiya', 'Senators', 'Kaftans', 'Street Wears',
+        'Owanbe Caps', 'Hausa Caps', '2 Piece Male',
+        '2 Piece Female', 'Stone Work & Embellishment'
+    ]
+    highlights = {}
+    for cat in categories:
+        products = Product.query.filter_by(category=cat).limit(2).all()
+        if products:
+            highlights[cat] = products
+    return render_template('index.html', highlights=highlights)
+
+@app.route('/shop')
+def shop():
+    category = request.args.get('category', 'All')
+    if category == 'All':
+        products = Product.query.all()
+    else:
+        products = Product.query.filter_by(category=category).all()
+    return render_template('shop.html', products=products, active_category=category)
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
@@ -102,7 +121,6 @@ def admin_logout():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-        # Create default admin if none exists
         if not Admin.query.first():
             default_admin = Admin(
                 username='admin',
