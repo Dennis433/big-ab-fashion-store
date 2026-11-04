@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collections - BIG AB Fashion</title>
+    <title>BIG AB Fashion</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
@@ -20,8 +20,7 @@
             <span></span>
         </div>
         <ul class="nav-links" id="navLinks">
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('shop') }}" class="active">Collections</a></li>
+            <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
             <li><a href="#">About</a></li>
             <li><a href="#">Contact</a></li>
         </ul>
@@ -40,16 +39,16 @@
     <!-- FILTER TABS -->
     <section class="shop-section">
         <div class="filter-tabs">
-            <a href="{{ url_for('shop') }}" class="tab {% if active_category == 'All' %}active{% endif %}">All</a>
-            <a href="{{ url_for('shop', category='Jalabiya') }}" class="tab {% if active_category == 'Jalabiya' %}active{% endif %}">Jalabiya</a>
-            <a href="{{ url_for('shop', category='Senators') }}" class="tab {% if active_category == 'Senators' %}active{% endif %}">Senators</a>
-            <a href="{{ url_for('shop', category='Kaftans') }}" class="tab {% if active_category == 'Kaftans' %}active{% endif %}">Kaftans</a>
-            <a href="{{ url_for('shop', category='Street Wears') }}" class="tab {% if active_category == 'Street Wears' %}active{% endif %}">Street Wears</a>
-            <a href="{{ url_for('shop', category='Owanbe Caps') }}" class="tab {% if active_category == 'Owanbe Caps' %}active{% endif %}">Owanbe Caps</a>
-            <a href="{{ url_for('shop', category='Hausa Caps') }}" class="tab {% if active_category == 'Hausa Caps' %}active{% endif %}">Hausa Caps</a>
-            <a href="{{ url_for('shop', category='2 Piece Male') }}" class="tab {% if active_category == '2 Piece Male' %}active{% endif %}">2 Piece Male</a>
-            <a href="{{ url_for('shop', category='2 Piece Female') }}" class="tab {% if active_category == '2 Piece Female' %}active{% endif %}">2 Piece Female</a>
-            <a href="{{ url_for('shop', category='Stone Work & Embellishment') }}" class="tab {% if active_category == 'Stone Work & Embellishment' %}active{% endif %}">Stone Work & Embellishment</a>
+            <a href="{{ url_for('home') }}" class="tab {% if active_category == 'All' %}active{% endif %}">All</a>
+            <a href="{{ url_for('home') }}?category=Jalabiya" class="tab {% if active_category == 'Jalabiya' %}active{% endif %}">Jalabiya</a>
+            <a href="{{ url_for('home') }}?category=Senators" class="tab {% if active_category == 'Senators' %}active{% endif %}">Senators</a>
+            <a href="{{ url_for('home') }}?category=Kaftans" class="tab {% if active_category == 'Kaftans' %}active{% endif %}">Kaftans</a>
+            <a href="{{ url_for('home') }}?category=Street+Wears" class="tab {% if active_category == 'Street Wears' %}active{% endif %}">Street Wears</a>
+            <a href="{{ url_for('home') }}?category=Owanbe+Caps" class="tab {% if active_category == 'Owanbe Caps' %}active{% endif %}">Owanbe Caps</a>
+            <a href="{{ url_for('home') }}?category=Hausa+Caps" class="tab {% if active_category == 'Hausa Caps' %}active{% endif %}">Hausa Caps</a>
+            <a href="{{ url_for('home') }}?category=2+Piece+Male" class="tab {% if active_category == '2 Piece Male' %}active{% endif %}">2 Piece Male</a>
+            <a href="{{ url_for('home') }}?category=2+Piece+Female" class="tab {% if active_category == '2 Piece Female' %}active{% endif %}">2 Piece Female</a>
+            <a href="{{ url_for('home') }}?category=Stone+Work+%26+Embellishment" class="tab {% if active_category == 'Stone Work & Embellishment' %}active{% endif %}">Stone Work & Embellishment</a>
         </div>
 
         <!-- PRODUCTS GRID -->
@@ -63,7 +62,6 @@
                     {% else %}
                         <div class="no-img">No Image</div>
                     {% endif %}
-                    <!-- IMAGE DOTS -->
                     {% set images = product.get_images() %}
                     {% if images|length > 1 %}
                     <div class="img-dots">
@@ -89,7 +87,7 @@
         {% else %}
         <div class="no-products">
             <p>No products found in this category.</p>
-            <a href="{{ url_for('shop') }}" class="btn">View All</a>
+            <a href="{{ url_for('home') }}" class="btn">View All</a>
         </div>
         {% endif %}
     </section>

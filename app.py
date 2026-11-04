@@ -73,7 +73,6 @@ def run_migrations():
         columns = [col['name'] for col in inspector.get_columns('product')]
 
         with db.engine.connect() as conn:
-            # Add images column if it doesn't exist
             if 'images' not in columns:
                 try:
                     conn.execute(text("ALTER TABLE product ADD COLUMN images TEXT"))
@@ -82,7 +81,6 @@ def run_migrations():
                 except Exception as e:
                     print(f"⚠️ Could not add images column: {e}")
 
-            # Migrate old image column data to images JSON format
             if 'image' in columns:
                 try:
                     conn.execute(text("""
@@ -97,7 +95,6 @@ def run_migrations():
                 except Exception as e:
                     print(f"⚠️ Could not migrate image data: {e}")
 
-                # Drop old image column
                 try:
                     conn.execute(text("ALTER TABLE product DROP COLUMN image"))
                     conn.commit()
@@ -105,7 +102,6 @@ def run_migrations():
                 except Exception as e:
                     print(f"⚠️ Could not drop old image column: {e}")
 
-            # Fix any products where images is a plain URL not wrapped in JSON
             try:
                 result = conn.execute(text("SELECT id, images FROM product WHERE images IS NOT NULL"))
                 rows = result.fetchall()
@@ -143,23 +139,17 @@ def initialize_app():
             db.session.commit()
             print('✅ Default admin created: username=admin password=bigab2024')
 
-# Runs on every startup including gunicorn
 initialize_app()
 
 # ── ROUTES ──────────────────────────────────────────
 @app.route('/')
 def home():
-    categories = [
-        'Jalabiya', 'Senators', 'Kaftans', 'Street Wears',
-        'Owanbe Caps', 'Hausa Caps', '2 Piece Male',
-        '2 Piece Female', 'Stone Work & Embellishment'
-    ]
-    highlights = {}
-    for cat in categories:
-        products = Product.query.filter_by(category=cat).limit(2).all()
-        if products:
-            highlights[cat] = products
-    return render_template('index.html', highlights=highlights)
+    category = request.args.get('category', 'All')
+    if category == 'All':
+        products = Product.query.all()
+    else:
+        products = Product.query.filter_by(category=category).all()
+    return render_template('shop.html', products=products, active_category=category)
 
 @app.route('/shop')
 def shop():
