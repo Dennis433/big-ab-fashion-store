@@ -14,6 +14,7 @@
             color: #fff;
         }
 
+        /* SIDEBAR */
         .sidebar {
             width: 240px;
             background: #111;
@@ -25,6 +26,8 @@
             flex-direction: column;
             align-items: center;
             padding: 30px 0;
+            z-index: 200;
+            transition: transform 0.3s;
         }
 
         .sidebar img {
@@ -55,6 +58,48 @@
             color: #ff4444;
         }
 
+        /* TOPBAR */
+        .topbar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            background: #111;
+            padding: 14px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #222;
+        }
+
+        .topbar img {
+            height: 40px;
+        }
+
+        .topbar-hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .topbar-hamburger span {
+            width: 24px;
+            height: 2px;
+            background: #fff;
+        }
+
+        /* OVERLAY */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 150;
+        }
+
+        .overlay.active { display: block; }
+
+        /* MAIN */
         .main {
             margin-left: 240px;
             padding: 40px;
@@ -83,6 +128,7 @@
             font-size: 13px;
         }
 
+        /* STATS */
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -111,6 +157,7 @@
             margin-top: 6px;
         }
 
+        /* ADD BUTTON */
         .add-btn {
             display: inline-block;
             padding: 12px 30px;
@@ -127,10 +174,17 @@
 
         .add-btn:hover { background: #fff; }
 
+        /* TABLE */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             background: #111;
+            min-width: 600px;
         }
 
         thead { background: #1a1a1a; }
@@ -171,6 +225,7 @@
             text-transform: uppercase;
             transition: all 0.3s;
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .delete-btn:hover {
@@ -184,11 +239,97 @@
             color: #555;
             font-size: 16px;
         }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .topbar {
+                display: flex;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .main h1 {
+                font-size: 24px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-card h3 {
+                font-size: 26px;
+            }
+
+            .stat-card p {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-card h3 {
+                font-size: 22px;
+            }
+
+            .add-btn {
+                width: 100%;
+                text-align: center;
+                padding: 14px;
+            }
+
+            td, th {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            td img {
+                height: 40px;
+                width: 40px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
+    <!-- MOBILE TOPBAR -->
+    <div class="topbar">
+        <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
+        <div class="topbar-hamburger" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
         <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
         <a href="{{ url_for('admin_dashboard') }}" class="active">📦 Products</a>
         <a href="{{ url_for('add_product') }}">➕ Add Product</a>
@@ -196,6 +337,7 @@
         <a href="{{ url_for('admin_logout') }}" class="logout">🚪 Logout</a>
     </div>
 
+    <!-- MAIN CONTENT -->
     <div class="main">
         <h1>Dashboard</h1>
         <p class="subtitle">Manage your BIG AB Fashion products</p>
@@ -253,43 +395,52 @@
         <a href="{{ url_for('add_product') }}" class="add-btn">➕ Add New Product</a>
 
         {% if products %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products %}
-                <tr>
-                    <td>
-                        {% if product.image %}
-                            <img src="{{ product.image }}" alt="{{ product.name }}">
-                        {% else %}
-                            No Image
-                        {% endif %}
-                    </td>
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.category }}</td>
-                    <td>₦{{ "%.2f"|format(product.price) }}</td>
-                    <td>{{ product.description[:50] if product.description else '' }}{% if product.description and product.description|length > 50 %}...{% endif %}</td>
-                    <td>
-                        <a href="{{ url_for('delete_product', id=product.id) }}" class="delete-btn"
-                           onclick="return confirm('Delete this product?')">Delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            {% if product.image %}
+                                <img src="{{ product.image }}" alt="{{ product.name }}">
+                            {% else %}
+                                No Image
+                            {% endif %}
+                        </td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.category }}</td>
+                        <td>₦{{ "%.2f"|format(product.price) }}</td>
+                        <td>{{ product.description[:50] if product.description else '' }}{% if product.description and product.description|length > 50 %}...{% endif %}</td>
+                        <td>
+                            <a href="{{ url_for('delete_product', id=product.id) }}" class="delete-btn"
+                               onclick="return confirm('Delete this product?')">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
             <div class="no-products">No products yet. Add your first product! 👆</div>
         {% endif %}
     </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+    </script>
 
 </body>
 </html>

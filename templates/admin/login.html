@@ -14,7 +14,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .login-box {
@@ -81,6 +82,20 @@
         }
 
         button:hover { background: #fff; }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 30px 20px;
+            }
+
+            .login-box img {
+                height: 60px;
+            }
+
+            .login-box h2 {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 <body>
