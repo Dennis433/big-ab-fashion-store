@@ -66,7 +66,6 @@ def run_migrations():
     try:
         inspector = inspect(db.engine)
 
-        # Check if product table exists
         if 'product' not in inspector.get_table_names():
             print("⚠️ Product table not found, skipping migration")
             return
@@ -83,14 +82,15 @@ def run_migrations():
                 except Exception as e:
                     print(f"⚠️ Could not add images column: {e}")
 
-            # Migrate old image data to images JSON format
+            # Migrate old image column data to images JSON format
             if 'image' in columns:
                 try:
                     conn.execute(text("""
                         UPDATE product
                         SET images = '["' || image || '"]'
                         WHERE image IS NOT NULL
-                        AND (images IS NULL OR images = '')
+                        AND image != ''
+                        AND (images IS NULL OR images = '' OR images = '[]')
                     """))
                     conn.commit()
                     print("✅ Migrated old image data")
@@ -105,6 +105,22 @@ def run_migrations():
                 except Exception as e:
                     print(f"⚠️ Could not drop old image column: {e}")
 
+            # Fix any products where images is a plain URL not wrapped in JSON
+            try:
+                result = conn.execute(text("SELECT id, images FROM product WHERE images IS NOT NULL"))
+                rows = result.fetchall()
+                for row in rows:
+                    img_val = row[1]
+                    if img_val and not img_val.strip().startswith('['):
+                        fixed = json.dumps([img_val.strip()])
+                        conn.execute(text(
+                            "UPDATE product SET images = :imgs WHERE id = :id"
+                        ), {"imgs": fixed, "id": row[0]})
+                conn.commit()
+                print("✅ Fixed malformed images data")
+            except Exception as e:
+                print(f"⚠️ Could not fix malformed images: {e}")
+
     except Exception as e:
         print(f"⚠️ Migration error: {e}")
 
@@ -112,7 +128,11 @@ def run_migrations():
 def initialize_app():
     with app.app_context():
         db.create_all()
-        run_migrations()
+
+        try:
+            run_migrations()
+        except Exception as e:
+            print(f"⚠️ Migration skipped: {e}")
 
         if not Admin.query.first():
             default_admin = Admin(
@@ -123,7 +143,7 @@ def initialize_app():
             db.session.commit()
             print('✅ Default admin created: username=admin password=bigab2024')
 
-# Run on every startup including gunicorn
+# Runs on every startup including gunicorn
 initialize_app()
 
 # ── ROUTES ──────────────────────────────────────────
