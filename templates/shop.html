@@ -58,10 +58,20 @@
             {% for product in products %}
             <div class="product-card">
                 <div class="product-img">
-                    {% if product.image %}
-                        <img src="{{ product.image }}" alt="{{ product.name }}">
+                    {% if product.get_first_image() %}
+                        <img src="{{ product.get_first_image() }}" alt="{{ product.name }}">
                     {% else %}
                         <div class="no-img">No Image</div>
+                    {% endif %}
+                    <!-- IMAGE DOTS -->
+                    {% set images = product.get_images() %}
+                    {% if images|length > 1 %}
+                    <div class="img-dots">
+                        {% for img in images %}
+                        <span class="dot {% if loop.first %}active{% endif %}"
+                              onclick="changeImage(this, '{{ img }}')"></span>
+                        {% endfor %}
+                    </div>
                     {% endif %}
                     <div class="product-overlay">
                         <a href="#" class="overlay-btn">Quick View</a>
@@ -96,6 +106,13 @@
         function toggleMenu() {
             const nav = document.getElementById('navLinks');
             nav.classList.toggle('open');
+        }
+
+        function changeImage(dot, imgUrl) {
+            const card = dot.closest('.product-img');
+            card.querySelector('img').src = imgUrl;
+            card.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+            dot.classList.add('active');
         }
     </script>
 

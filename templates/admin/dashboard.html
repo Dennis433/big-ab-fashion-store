@@ -14,7 +14,6 @@
             color: #fff;
         }
 
-        /* SIDEBAR */
         .sidebar {
             width: 240px;
             background: #111;
@@ -58,7 +57,6 @@
             color: #ff4444;
         }
 
-        /* TOPBAR */
         .topbar {
             display: none;
             align-items: center;
@@ -71,9 +69,7 @@
             border-bottom: 1px solid #222;
         }
 
-        .topbar img {
-            height: 40px;
-        }
+        .topbar img { height: 40px; }
 
         .topbar-hamburger {
             display: flex;
@@ -88,7 +84,6 @@
             background: #fff;
         }
 
-        /* OVERLAY */
         .overlay {
             display: none;
             position: fixed;
@@ -99,7 +94,6 @@
 
         .overlay.active { display: block; }
 
-        /* MAIN */
         .main {
             margin-left: 240px;
             padding: 40px;
@@ -128,7 +122,6 @@
             font-size: 13px;
         }
 
-        /* STATS */
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -157,7 +150,6 @@
             margin-top: 6px;
         }
 
-        /* ADD BUTTON */
         .add-btn {
             display: inline-block;
             padding: 12px 30px;
@@ -174,7 +166,6 @@
 
         .add-btn:hover { background: #fff; }
 
-        /* TABLE */
         .table-wrapper {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -207,10 +198,18 @@
             vertical-align: middle;
         }
 
-        td img {
+        /* IMAGE THUMBNAILS */
+        .img-thumbs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .img-thumbs img {
             height: 50px;
             width: 50px;
             object-fit: cover;
+            border: 1px solid #333;
         }
 
         .delete-btn {
@@ -240,76 +239,25 @@
             font-size: 16px;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .topbar {
-                display: flex;
-            }
-
-            .main {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .main h1 {
-                font-size: 24px;
-            }
-
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .stat-card {
-                padding: 16px;
-            }
-
-            .stat-card h3 {
-                font-size: 26px;
-            }
-
-            .stat-card p {
-                font-size: 10px;
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .topbar { display: flex; }
+            .main { margin-left: 0; padding: 20px; }
+            .main h1 { font-size: 24px; }
+            .stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .stat-card { padding: 16px; }
+            .stat-card h3 { font-size: 26px; }
+            .stat-card p { font-size: 10px; }
         }
 
         @media (max-width: 480px) {
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-
-            .stat-card {
-                padding: 12px;
-            }
-
-            .stat-card h3 {
-                font-size: 22px;
-            }
-
-            .add-btn {
-                width: 100%;
-                text-align: center;
-                padding: 14px;
-            }
-
-            td, th {
-                padding: 10px 12px;
-                font-size: 12px;
-            }
-
-            td img {
-                height: 40px;
-                width: 40px;
-            }
+            .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card { padding: 12px; }
+            .stat-card h3 { font-size: 22px; }
+            .add-btn { width: 100%; text-align: center; padding: 14px; }
+            td, th { padding: 10px 12px; font-size: 12px; }
+            .img-thumbs img { height: 40px; width: 40px; }
         }
     </style>
 </head>
@@ -319,9 +267,7 @@
     <div class="topbar">
         <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
         <div class="topbar-hamburger" onclick="toggleSidebar()">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </div>
     </div>
 
@@ -399,7 +345,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Image</th>
+                        <th>Images</th>
                         <th>Name</th>
                         <th>Category</th>
                         <th>Price</th>
@@ -411,11 +357,13 @@
                     {% for product in products %}
                     <tr>
                         <td>
-                            {% if product.image %}
-                                <img src="{{ product.image }}" alt="{{ product.name }}">
-                            {% else %}
-                                No Image
-                            {% endif %}
+                            <div class="img-thumbs">
+                                {% for img in product.get_images() %}
+                                    <img src="{{ img }}" alt="{{ product.name }}">
+                                {% else %}
+                                    No Image
+                                {% endfor %}
+                            </div>
                         </td>
                         <td>{{ product.name }}</td>
                         <td>{{ product.category }}</td>

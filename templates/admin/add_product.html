@@ -14,7 +14,6 @@
             color: #fff;
         }
 
-        /* SIDEBAR */
         .sidebar {
             width: 240px;
             background: #111;
@@ -55,7 +54,6 @@
 
         .sidebar .logout { color: #ff4444; margin-top: auto; }
 
-        /* TOPBAR */
         .topbar {
             display: none;
             align-items: center;
@@ -83,7 +81,6 @@
             background: #fff;
         }
 
-        /* OVERLAY */
         .overlay {
             display: none;
             position: fixed;
@@ -94,7 +91,6 @@
 
         .overlay.active { display: block; }
 
-        /* MAIN */
         .main {
             margin-left: 240px;
             padding: 40px;
@@ -143,6 +139,89 @@
         select option { background: #111; }
         textarea { height: 120px; resize: vertical; }
 
+        /* IMAGE UPLOAD */
+        .image-upload-area {
+            border: 2px dashed #333;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: border 0.3s;
+            position: relative;
+        }
+
+        .image-upload-area:hover {
+            border-color: #c9a84c;
+        }
+
+        .image-upload-area input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .image-upload-area p {
+            color: #aaa;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .image-upload-area span {
+            color: #c9a84c;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: block;
+            margin-top: 8px;
+        }
+
+        /* IMAGE PREVIEWS */
+        .image-previews {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .preview-item {
+            position: relative;
+            height: 100px;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-item .remove {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .hint {
+            color: #555;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-top: 8px;
+        }
+
         .submit-btn {
             padding: 14px 40px;
             background: #c9a84c;
@@ -176,72 +255,33 @@
 
         .back-btn:hover { border-color: #fff; color: #fff; }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .topbar {
-                display: flex;
-            }
-
-            .main {
-                margin-left: 0;
-                padding: 20px;
-                max-width: 100%;
-            }
-
-            .main h1 {
-                font-size: 24px;
-            }
-
-            .submit-btn {
-                width: 100%;
-                text-align: center;
-            }
-
-            .back-btn {
-                width: 100%;
-                text-align: center;
-                margin-left: 0;
-                margin-top: 12px;
-                display: block;
-            }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .topbar { display: flex; }
+            .main { margin-left: 0; padding: 20px; max-width: 100%; }
+            .main h1 { font-size: 24px; }
+            .submit-btn { width: 100%; text-align: center; }
+            .back-btn { width: 100%; text-align: center; margin-left: 0; margin-top: 12px; display: block; }
         }
 
         @media (max-width: 480px) {
-            input, select, textarea {
-                font-size: 13px;
-                padding: 12px;
-            }
-
-            label {
-                font-size: 11px;
-            }
+            input, select, textarea { font-size: 13px; padding: 12px; }
+            label { font-size: 11px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- MOBILE TOPBAR -->
     <div class="topbar">
         <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
         <div class="topbar-hamburger" onclick="toggleSidebar()">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </div>
     </div>
 
-    <!-- OVERLAY -->
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
         <a href="{{ url_for('admin_dashboard') }}">📦 Products</a>
@@ -250,7 +290,6 @@
         <a href="{{ url_for('admin_logout') }}" class="logout">🚪 Logout</a>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main">
         <h1>Add New Product</h1>
         <p class="subtitle">Fill in the details below to add a product</p>
@@ -288,8 +327,14 @@
             </div>
 
             <div class="form-group">
-                <label>Product Image</label>
-                <input type="file" name="image" accept="image/*">
+                <label>Product Images</label>
+                <div class="image-upload-area" id="uploadArea">
+                    <input type="file" name="images" id="imageInput" accept="image/*" multiple>
+                    <p>📷 Click or drag to upload images</p>
+                    <span>Select multiple images</span>
+                </div>
+                <p class="hint">You can upload up to 5 images per product</p>
+                <div class="image-previews" id="imagePreviews"></div>
             </div>
 
             <button type="submit" class="submit-btn">Add Product</button>
@@ -301,6 +346,46 @@
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('active');
+        }
+
+        const imageInput = document.getElementById('imageInput');
+        const imagePreviews = document.getElementById('imagePreviews');
+        let selectedFiles = [];
+
+        imageInput.addEventListener('change', function () {
+            const newFiles = Array.from(this.files);
+            selectedFiles = [...selectedFiles, ...newFiles].slice(0, 5);
+            renderPreviews();
+            updateFileInput();
+        });
+
+        function renderPreviews() {
+            imagePreviews.innerHTML = '';
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const item = document.createElement('div');
+                    item.className = 'preview-item';
+                    item.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <button type="button" class="remove" onclick="removeImage(${index})">×</button>
+                    `;
+                    imagePreviews.appendChild(item);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeImage(index) {
+            selectedFiles.splice(index, 1);
+            renderPreviews();
+            updateFileInput();
+        }
+
+        function updateFileInput() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            imageInput.files = dataTransfer.files;
         }
     </script>
 
