@@ -14,7 +14,12 @@
         <div class="nav-logo">
             <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB Fashion Logo">
         </div>
-        <ul class="nav-links">
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links" id="navLinks">
             <li><a href="{{ url_for('home') }}">Home</a></li>
             <li><a href="{{ url_for('shop') }}" class="active">Collections</a></li>
             <li><a href="#">About</a></li>
@@ -86,6 +91,13 @@
             <p>© 2026 BIG AB Fashion. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            nav.classList.toggle('open');
+        }
+    </script>
 
 </body>
 </html>
