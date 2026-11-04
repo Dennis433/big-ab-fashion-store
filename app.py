@@ -42,7 +42,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
     category = db.Column(db.String(50), nullable=False)
-    images = db.Column(db.Text, nullable=True)  # JSON list of image URLs
+    images = db.Column(db.Text, nullable=True)
 
     def get_images(self):
         if self.images:
@@ -63,8 +63,14 @@ def load_user(user_id):
 # ── DATABASE MIGRATION ───────────────────────────────
 def run_migrations():
     from sqlalchemy import text, inspect
-    with app.app_context():
+    try:
         inspector = inspect(db.engine)
+
+        # Check if product table exists
+        if 'product' not in inspector.get_table_names():
+            print("⚠️ Product table not found, skipping migration")
+            return
+
         columns = [col['name'] for col in inspector.get_columns('product')]
 
         with db.engine.connect() as conn:
@@ -87,18 +93,38 @@ def run_migrations():
                         AND (images IS NULL OR images = '')
                     """))
                     conn.commit()
-                    print("✅ Migrated old image data to images column")
+                    print("✅ Migrated old image data")
                 except Exception as e:
                     print(f"⚠️ Could not migrate image data: {e}")
 
-            # Drop old image column if it exists
-            if 'image' in columns:
+                # Drop old image column
                 try:
                     conn.execute(text("ALTER TABLE product DROP COLUMN image"))
                     conn.commit()
                     print("✅ Dropped old image column")
                 except Exception as e:
                     print(f"⚠️ Could not drop old image column: {e}")
+
+    except Exception as e:
+        print(f"⚠️ Migration error: {e}")
+
+# ── STARTUP ──────────────────────────────────────────
+def initialize_app():
+    with app.app_context():
+        db.create_all()
+        run_migrations()
+
+        if not Admin.query.first():
+            default_admin = Admin(
+                username='admin',
+                password=generate_password_hash('bigab2024')
+            )
+            db.session.add(default_admin)
+            db.session.commit()
+            print('✅ Default admin created: username=admin password=bigab2024')
+
+# Run on every startup including gunicorn
+initialize_app()
 
 # ── ROUTES ──────────────────────────────────────────
 @app.route('/')
@@ -194,25 +220,6 @@ def admin_logout():
     logout_user()
     return redirect(url_for('admin_login'))
 
-# ── INIT DB & MIGRATE ────────────────────────────────
+# ── RUN ──────────────────────────────────────────────
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-
-        # Run migrations
-        try:
-            run_migrations()
-        except Exception as e:
-            print(f"⚠️ Migration skipped (table may not exist yet): {e}")
-
-        # Create default admin if none exists
-        if not Admin.query.first():
-            default_admin = Admin(
-                username='admin',
-                password=generate_password_hash('bigab2024')
-            )
-            db.session.add(default_admin)
-            db.session.commit()
-            print('✅ Default admin created: username=admin password=bigab2024')
-
     app.run(debug=True)
