@@ -46,7 +46,10 @@ class Product(db.Model):
 
     def get_images(self):
         if self.images:
-            return json.loads(self.images)
+            try:
+                return json.loads(self.images)
+            except Exception:
+                return []
         return []
 
     def get_first_image(self):
@@ -56,6 +59,46 @@ class Product(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return Admin.query.get(int(user_id))
+
+# ── DATABASE MIGRATION ───────────────────────────────
+def run_migrations():
+    from sqlalchemy import text, inspect
+    with app.app_context():
+        inspector = inspect(db.engine)
+        columns = [col['name'] for col in inspector.get_columns('product')]
+
+        with db.engine.connect() as conn:
+            # Add images column if it doesn't exist
+            if 'images' not in columns:
+                try:
+                    conn.execute(text("ALTER TABLE product ADD COLUMN images TEXT"))
+                    conn.commit()
+                    print("✅ Added images column")
+                except Exception as e:
+                    print(f"⚠️ Could not add images column: {e}")
+
+            # Migrate old image data to images JSON format
+            if 'image' in columns:
+                try:
+                    conn.execute(text("""
+                        UPDATE product
+                        SET images = '["' || image || '"]'
+                        WHERE image IS NOT NULL
+                        AND (images IS NULL OR images = '')
+                    """))
+                    conn.commit()
+                    print("✅ Migrated old image data to images column")
+                except Exception as e:
+                    print(f"⚠️ Could not migrate image data: {e}")
+
+            # Drop old image column if it exists
+            if 'image' in columns:
+                try:
+                    conn.execute(text("ALTER TABLE product DROP COLUMN image"))
+                    conn.commit()
+                    print("✅ Dropped old image column")
+                except Exception as e:
+                    print(f"⚠️ Could not drop old image column: {e}")
 
 # ── ROUTES ──────────────────────────────────────────
 @app.route('/')
@@ -151,10 +194,18 @@ def admin_logout():
     logout_user()
     return redirect(url_for('admin_login'))
 
-# ── INIT DB ─────────────────────────────────────────
+# ── INIT DB & MIGRATE ────────────────────────────────
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
+        # Run migrations
+        try:
+            run_migrations()
+        except Exception as e:
+            print(f"⚠️ Migration skipped (table may not exist yet): {e}")
+
+        # Create default admin if none exists
         if not Admin.query.first():
             default_admin = Admin(
                 username='admin',
@@ -162,5 +213,6 @@ if __name__ == '__main__':
             )
             db.session.add(default_admin)
             db.session.commit()
-            print('Default admin created: username=admin password=bigab2024')
+            print('✅ Default admin created: username=admin password=bigab2024')
+
     app.run(debug=True)
