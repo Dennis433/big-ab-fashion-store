@@ -22,10 +22,19 @@
         <ul class="nav-links" id="navLinks">
             <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
             <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
+            <li class="contact-dropdown">
+                <a href="#" class="contact-toggle">Contact</a>
+                <div class="contact-menu">
+                    <a href="https://wa.me/2348155757749" target="_blank">💬 WhatsApp</a>
+                    <a href="tel:07071339338">📞 07071339338</a>
+                    <a href="https://www.instagram.com/big_ab70" target="_blank">📸 Instagram</a>
+                    <a href="https://www.tiktok.com/@big_ab70" target="_blank">🎵 TikTok</a>
+                    <a href="https://maps.google.com/?q=11+Waziri+Street+Ungwan+Yelwa+Television+Kaduna" target="_blank">📍 Find Us</a>
+                </div>
+            </li>
         </ul>
         <div class="nav-icons">
-            <a href="#">🔍</a>
+            <a href="https://wa.me/2348155757749" target="_blank">💬</a>
             <a href="#">🛒</a>
         </div>
     </nav>
@@ -79,7 +88,7 @@
                     <span class="product-category">{{ product.category }}</span>
                     <h3 class="product-name">{{ product.name }}</h3>
                     <p class="product-price">₦{{ "%.2f"|format(product.price) }}</p>
-                    <a href="#" class="add-to-cart-btn">Add to Cart</a>
+                    <a href="https://wa.me/2348155757749?text=Hi%20BIG%20AB%20Fashion%2C%20I%20am%20interested%20in%20{{ product.name | urlencode }}" target="_blank" class="add-to-cart-btn">Order on WhatsApp</a>
                 </div>
             </div>
             {% endfor %}
@@ -96,6 +105,13 @@
     <footer class="footer">
         <div class="footer-content">
             <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB Fashion">
+            <div class="footer-links">
+                <a href="https://wa.me/2348155757749" target="_blank">💬 WhatsApp</a>
+                <a href="tel:07071339338">📞 07071339338</a>
+                <a href="https://www.instagram.com/big_ab70" target="_blank">📸 Instagram</a>
+                <a href="https://www.tiktok.com/@big_ab70" target="_blank">🎵 TikTok</a>
+                <a href="https://maps.google.com/?q=11+Waziri+Street+Ungwan+Yelwa+Television+Kaduna" target="_blank">📍 Kaduna</a>
+            </div>
             <p>© 2026 BIG AB Fashion. All rights reserved.</p>
         </div>
     </footer>
@@ -111,6 +127,17 @@
             card.querySelector('img').src = imgUrl;
             card.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
             dot.classList.add('active');
+        }
+
+        // Mobile contact dropdown toggle
+        const contactToggle = document.querySelector('.contact-toggle');
+        if (contactToggle) {
+            contactToggle.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    document.querySelector('.contact-dropdown').classList.toggle('open');
+                }
+            });
         }
     </script>
 
