@@ -215,6 +215,39 @@ def add_product():
         return redirect(url_for('admin_dashboard'))
     return render_template('admin/add_product.html')
 
+@app.route('/admin/edit_product/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_product(id):
+    product = Product.query.get_or_404(id)
+    if request.method == 'POST':
+        product.name = request.form['name']
+        product.price = float(request.form['price'])
+        product.description = request.form['description']
+        product.category = request.form['category']
+
+        images = request.files.getlist('images')
+        new_image_urls = []
+        for image in images:
+            if image and image.filename != '':
+                upload_result = cloudinary.uploader.upload(
+                    image,
+                    folder='bigab_fashion',
+                    transformation=[
+                        {'width': 800, 'height': 1000, 'crop': 'fill'},
+                        {'quality': 'auto'},
+                        {'fetch_format': 'auto'}
+                    ]
+                )
+                new_image_urls.append(upload_result['secure_url'])
+
+        if new_image_urls:
+            product.images = json.dumps(new_image_urls)
+
+        db.session.commit()
+        flash('Product updated successfully!')
+        return redirect(url_for('admin_dashboard'))
+    return render_template('admin/edit_product.html', product=product)
+
 @app.route('/admin/delete_product/<int:id>')
 @login_required
 def delete_product(id):

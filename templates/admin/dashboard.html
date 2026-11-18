@@ -198,7 +198,6 @@
             vertical-align: middle;
         }
 
-        /* IMAGE THUMBNAILS */
         .img-thumbs {
             display: flex;
             gap: 6px;
@@ -210,6 +209,32 @@
             width: 50px;
             object-fit: cover;
             border: 1px solid #333;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .edit-btn {
+            padding: 8px 16px;
+            background: transparent;
+            color: #c9a84c;
+            border: 1px solid #c9a84c;
+            font-size: 12px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            font-family: 'Raleway', sans-serif;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .edit-btn:hover {
+            background: #c9a84c;
+            color: #000;
         }
 
         .delete-btn {
@@ -258,12 +283,12 @@
             .add-btn { width: 100%; text-align: center; padding: 14px; }
             td, th { padding: 10px 12px; font-size: 12px; }
             .img-thumbs img { height: 40px; width: 40px; }
+            .action-btns { flex-direction: column; gap: 6px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- MOBILE TOPBAR -->
     <div class="topbar">
         <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
         <div class="topbar-hamburger" onclick="toggleSidebar()">
@@ -271,10 +296,8 @@
         </div>
     </div>
 
-    <!-- OVERLAY -->
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <img src="{{ url_for('static', filename='images/BIG_AB.jpg') }}" alt="BIG AB">
         <a href="{{ url_for('admin_dashboard') }}" class="active">📦 Products</a>
@@ -283,7 +306,6 @@
         <a href="{{ url_for('admin_logout') }}" class="logout">🚪 Logout</a>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="main">
         <h1>Dashboard</h1>
         <p class="subtitle">Manage your BIG AB Fashion products</p>
@@ -294,7 +316,6 @@
             {% endif %}
         {% endwith %}
 
-        <!-- STATS -->
         <div class="stats">
             <div class="stat-card">
                 <h3>{{ products|length }}</h3>
@@ -350,7 +371,7 @@
                         <th>Category</th>
                         <th>Price</th>
                         <th>Description</th>
-                        <th>Action</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -370,8 +391,11 @@
                         <td>₦{{ "%.2f"|format(product.price) }}</td>
                         <td>{{ product.description[:50] if product.description else '' }}{% if product.description and product.description|length > 50 %}...{% endif %}</td>
                         <td>
-                            <a href="{{ url_for('delete_product', id=product.id) }}" class="delete-btn"
-                               onclick="return confirm('Delete this product?')">Delete</a>
+                            <div class="action-btns">
+                                <a href="{{ url_for('edit_product', id=product.id) }}" class="edit-btn">✏️ Edit</a>
+                                <a href="{{ url_for('delete_product', id=product.id) }}" class="delete-btn"
+                                   onclick="return confirm('Delete this product?')">🗑️ Delete</a>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
